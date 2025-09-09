@@ -1,7 +1,8 @@
-from turtle import distance
+
 import numpy as np
-def eculidean_distance(x1,x2):
-    return np.sqrt(np.sum(x1-x2)**2)
+
+def euclidean_distance(x1,x2):
+    return np.sqrt(np.sum((x1-x2)**2))
 
 class KNN:
     def __init__(self,k) -> None:
@@ -13,9 +14,10 @@ class KNN:
 
     def predict(self,X):
         predictions=[self._predict(x) for x in X]
+        return predictions
     def _predict(self,x):
         #compute distance
-        distance=[eculidean_distance(x,x_train)for x_train in self.X_train]  
+        distance=[euclidean_distance(x,x_train)for x_train in self.X_train]  
         #get k nearest samples,labels
         k_indices=np.argsort(distance)[:self.k]
         k_nearest_labels=[self.Y_train[i] for i in k_indices]
