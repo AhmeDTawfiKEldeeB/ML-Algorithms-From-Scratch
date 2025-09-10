@@ -8,4 +8,10 @@ dependencies = [
     "ipykernel==6.30.1",
     "numpy==2.3.2",
     "scikit-learn==1.7.2",
+    "tqdm==4.66.1",
+]
+
+[tool.uv.workspace]
+members = [
+    "algorithms/linear_regression_algorithm",
 ]
