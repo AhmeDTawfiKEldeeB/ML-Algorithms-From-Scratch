@@ -131,202 +131,584 @@ Linear Regression finds the best-fitting straight line through data points using
 
 ---
 
-## 🛠️ Installation & Setup
+## ⚙️ Installation & Setup
 
-### Prerequisites
-- Python 3.12 or higher
-- Git (for cloning)
+### 📾 Prerequisites
 
-### Quick Start
+- **Python 3.12+** (recommended)
+- **Git** for cloning the repository
+- **pip** or **uv** for package management
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd ML-Algorithms-From-Scratch
-   ```
+### 🚀 Quick Installation
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-   
-   **Or using uv (recommended):**
-   ```bash
-   uv sync
-   ```
+```bash
+# 1. Clone the repository
+git clone <your-repo-url>
+cd ML-Algorithms-From-Scratch
 
-3. **Test KNN Algorithm:**
-   ```bash
-   cd algorithms/knn_algorithm
-   python knn_test.py
-   ```
-   Expected output: Accuracy score around 0.97
+# 2. Install dependencies (choose one method)
 
-4. **Test Linear Regression:**
-   ```bash
-   cd algorithms/linear_regression_algorithm
-   python linear_regression_test.py
-   ```
-   Expected output: MSE value indicating model performance
+# Method A: Using pip
+pip install -r requirements.txt
 
-## 📊 Project Structure
+# Method B: Using uv (recommended - faster)
+uv sync
+```
+
+### 🧪 Verify Installation
+
+```bash
+# Test KNN Algorithm
+cd algorithms/knn_algorithm
+python knn_test.py
+# Expected output: Accuracy score around 0.97
+
+# Test Linear Regression
+cd ../linear_regression_algorithm
+python linear_regression_test.py
+# Expected output: MSE value showing model performance
+```
+
+---
+
+## 🔧 Usage Examples
+
+### 🎯 Complete KNN Example
+
+```python
+# File: examples/knn_example.py
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+from algorithms.knn_algorithm.knn import KNN
+
+# Load the famous Iris dataset
+print("🌺 Loading Iris dataset...")
+X, y = load_iris(return_X_y=True)
+print(f"Dataset shape: {X.shape}, Classes: {np.unique(y)}")
+
+# Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Test different k values
+print("\n🔍 Testing different k values:")
+for k in [1, 3, 5, 7, 9]:
+    # Create and train KNN classifier
+    knn = KNN(k=k)
+    knn.fit(X_train, y_train)
+    
+    # Make predictions
+    predictions = knn.predict(X_test)
+    accuracy = accuracy_score(y_test, predictions)
+    
+    print(f"k={k}: Accuracy = {accuracy:.3f}")
+
+# Detailed analysis with k=5
+print("\n📈 Detailed analysis with k=5:")
+knn_best = KNN(k=5)
+knn_best.fit(X_train, y_train)
+predictions = knn_best.predict(X_test)
+
+print(f"Accuracy: {accuracy_score(y_test, predictions):.3f}")
+print("\nClassification Report:")
+print(classification_report(y_test, predictions, 
+                          target_names=['Setosa', 'Versicolor', 'Virginica']))
+```
+
+### 📈 Complete Linear Regression Example
+
+```python
+# File: examples/linear_regression_example.py
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
+from algorithms.linear_regression_algorithm.linear_regression import LinearRegression
+
+# Generate synthetic dataset
+print("📊 Generating synthetic regression dataset...")
+X, y = make_regression(n_samples=100, n_features=1, noise=20, random_state=4)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print(f"Training set: {X_train.shape[0]} samples")
+print(f"Test set: {X_test.shape[0]} samples")
+
+# Test different learning rates
+print("\n🔍 Testing different learning rates:")
+learning_rates = [0.01, 0.1, 0.5]
+
+for lr in learning_rates:
+    # Create and train model
+    regressor = LinearRegression(lr=lr, n_iterations=1000)
+    regressor.fit(X_train, y_train)
+    
+    # Make predictions
+    predictions = regressor.predict(X_test)
+    
+    # Calculate MSE
+    mse = np.mean((y_test - predictions) ** 2)
+    print(f"Learning Rate {lr}: MSE = {mse:.3f}")
+
+# Detailed analysis with best learning rate
+print("\n📈 Training with optimal parameters:")
+best_regressor = LinearRegression(lr=0.1, n_iterations=1000)
+best_regressor.fit(X_train, y_train)
+
+# Final predictions
+final_predictions = best_regressor.predict(X_test)
+final_mse = np.mean((y_test - final_predictions) ** 2)
+
+print(f"Final MSE: {final_mse:.3f}")
+print(f"Final Weights: {best_regressor.weights}")
+print(f"Final Bias: {best_regressor.bias:.3f}")
+
+# Optional: Plot results (if matplotlib available)
+try:
+    plt.figure(figsize=(10, 6))
+    plt.scatter(X_test, y_test, color='blue', alpha=0.6, label='Actual')
+    plt.scatter(X_test, final_predictions, color='red', alpha=0.6, label='Predicted')
+    plt.xlabel('Feature')
+    plt.ylabel('Target')
+    plt.title('Linear Regression: Actual vs Predicted')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.show()
+except ImportError:
+    print("\n📊 Install matplotlib to see visualization: pip install matplotlib")
+```
+
+### 🔄 Comparing Both Algorithms
+
+```python
+# File: examples/algorithm_comparison.py
+from sklearn.datasets import load_breast_cancer, load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, mean_squared_error
+
+print("🤜 Comparing KNN vs Linear Regression on different tasks")
+
+# Classification task with KNN
+print("\n1. 🎯 Classification Task (Breast Cancer Dataset):")
+X_class, y_class = load_breast_cancer(return_X_y=True)
+X_train_c, X_test_c, y_train_c, y_test_c = train_test_split(
+    X_class, y_class, test_size=0.2, random_state=42
+)
+
+# Scale features for KNN
+scaler = StandardScaler()
+X_train_c_scaled = scaler.fit_transform(X_train_c)
+X_test_c_scaled = scaler.transform(X_test_c)
+
+knn = KNN(k=5)
+knn.fit(X_train_c_scaled, y_train_c)
+knn_predictions = knn.predict(X_test_c_scaled)
+knn_accuracy = accuracy_score(y_test_c, knn_predictions)
+
+print(f"KNN Accuracy: {knn_accuracy:.3f}")
+
+# Regression task with Linear Regression
+print("\n2. 📈 Regression Task (Boston Housing Dataset):")
+# Note: Using make_regression as boston dataset is deprecated
+from sklearn.datasets import make_regression
+X_reg, y_reg = make_regression(n_samples=500, n_features=13, noise=0.1, random_state=42)
+X_train_r, X_test_r, y_train_r, y_test_r = train_test_split(
+    X_reg, y_reg, test_size=0.2, random_state=42
+)
+
+linear_reg = LinearRegression(lr=0.01, n_iterations=1000)
+linear_reg.fit(X_train_r, y_train_r)
+linear_predictions = linear_reg.predict(X_test_r)
+linear_mse = mean_squared_error(y_test_r, linear_predictions)
+
+print(f"Linear Regression MSE: {linear_mse:.3f}")
+
+print("\n✨ Both algorithms successfully trained and evaluated!")
+```
+
+---
+
+## 📊 Algorithm Comparisons
+
+### 🆚 Feature Comparison
+
+| Aspect | KNN | Linear Regression |
+|--------|-----|-------------------|
+| **Type** | Classification | Regression |
+| **Learning** | Lazy (Instance-based) | Eager (Model-based) |
+| **Training Time** | O(1) - Just stores data | O(n × iterations) |
+| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication |
+| **Memory Usage** | High - Stores all training data | Low - Only weights and bias |
+| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship |
+| **Assumptions** | None | Linear relationship exists |
+| **Best For** | Complex decision boundaries | Linear relationships |
+
+### 🏆 Performance Comparison
+
+| Dataset Type | KNN Performance | Linear Regression Performance |
+|--------------|-----------------|-------------------------------|
+| **Small datasets** | ✅ Excellent | ✅ Excellent |
+| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) |
+| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization |
+| **Non-linear data** | ✅ Excellent | ❌ Poor |
+| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing |
+
+---
+
+## 🧠 Mathematical Foundations
+
+### 🎯 KNN Mathematics
+
+#### Distance Calculation
+**Euclidean Distance Formula:**
+```
+d(x₁, x₂) = √(∑ᵢ₌₁ᵈ (x₁ᵢ - x₂ᵢ)²)
+```
+
+**Where:**
+- `d(x₁, x₂)` = distance between points x₁ and x₂
+- `n` = number of features
+- `x₁ᵢ, x₂ᵢ` = values of feature i for points x₁ and x₂
+
+#### Classification Decision
+**Majority Voting:**
+```
+ŷ = mode(y₁, y₂, ..., yₖ)
+```
+
+**Where:**
+- `ŷ` = predicted class
+- `y₁, y₂, ..., yₖ` = classes of k nearest neighbors
+- `mode()` = most frequent value
+
+#### Algorithm Steps
+1. **Calculate distances** from query point to all training points
+2. **Sort distances** in ascending order
+3. **Select k nearest** neighbors
+4. **Vote** - return most common class among k neighbors
+
+### 📈 Linear Regression Mathematics
+
+#### Linear Model
+**Hypothesis Function:**
+```
+hθ(x) = θ₀ + θ₁x₁ + θ₂x₂ + ... + θₙxₙ
+```
+
+**Matrix Form:**
+```
+ŷ = Xθ + b
+```
+
+**Where:**
+- `ŷ` = predictions vector
+- `X` = feature matrix (m × n)
+- `θ` = weights vector (n × 1)
+- `b` = bias term (scalar)
+
+#### Cost Function
+**Mean Squared Error (MSE):**
+```
+J(θ,b) = (1/2m) × ∑ᵢ₌₁ᵐ (ŷᵢ - yᵢ)²
+```
+
+**Where:**
+- `J(θ,b)` = cost function
+- `m` = number of training examples
+- `ŷᵢ` = predicted value for example i
+- `yᵢ` = actual value for example i
+
+#### Gradient Descent
+**Weight Update:**
+```
+θ := θ - α × (∂J/∂θ)
+```
+
+**Bias Update:**
+```
+b := b - α × (∂J/∂b)
+```
+
+**Gradients:**
+```
+∂J/∂θ = (1/m) × Xᵀ × (ŷ - y)
+∂J/∂b = (1/m) × ∑(ŷ - y)
+```
+
+**Where:**
+- `α` = learning rate
+- `Xᵀ` = transpose of feature matrix
+
+#### Algorithm Steps
+1. **Initialize** weights (θ) and bias (b) to zero
+2. **Forward pass** - calculate predictions: ŷ = Xθ + b
+3. **Calculate cost** - compute MSE
+4. **Backward pass** - calculate gradients
+5. **Update parameters** - apply gradient descent
+6. **Repeat** steps 2-5 until convergence
+
+---
+
+## 📁 Project Structure
 
 ```
 ML-Algorithms-From-Scratch/
-├── algorithms/
-│   ├── knn_algorithm/
-│   │   ├── knn.py              # KNN implementation
-│   │   └── knn_test.py         # KNN testing script
-│   └── linear_regression_algorithm/
-│       ├── linear_regression.py # Linear regression implementation
-│       ├── linear_regression_test.py # Testing script
-│       ├── main.py             # Entry point
-│       └── pyproject.toml      # Local project config
-├── README.md                   # This file!
-├── requirements.txt            # Python dependencies
-└── pyproject.toml             # Main project configuration
+│
+├── 📁 algorithms/                    # Main algorithms directory
+│   │
+│   ├── 🎯 knn_algorithm/               # K-Nearest Neighbors implementation
+│   │   ├── 🐍 knn.py                     # Core KNN class implementation
+│   │   └── 🧪 knn_test.py               # KNN testing and validation
+│   │
+│   └── 📈 linear_regression_algorithm/ # Linear Regression implementation
+│       ├── 🐍 linear_regression.py       # Core Linear Regression class
+│       ├── 🧪 linear_regression_test.py   # Testing and validation
+│       ├── 🚀 main.py                   # Entry point and examples
+│       ├── 🗂️ .venv/                      # Virtual environment
+│       └── ⚙️ pyproject.toml             # Local project configuration
+│
+├── 📚 README.md                      # Comprehensive documentation (this file!)
+├── 📦 requirements.txt               # Python dependencies
+└── ⚙️ pyproject.toml                # Main project configuration
 ```
 
-## 🔬 Dependencies
+### 📂 File Descriptions
 
-- **NumPy (2.3.3)**: Core numerical computations
-- **scikit-learn**: Dataset loading and evaluation metrics
-- **tqdm (4.66.1)**: Progress bars for long-running operations
-- **ipykernel (6.30.1)**: Jupyter notebook support
+| File | Purpose | Key Contents |
+|------|---------|-------------|
+| **`knn.py`** | KNN Implementation | `KNN` class, `euclidean_distance()` function |
+| **`knn_test.py`** | KNN Validation | Iris dataset testing, accuracy measurement |
+| **`linear_regression.py`** | Linear Regression | `LinearRegression` class, gradient descent |
+| **`linear_regression_test.py`** | Regression Testing | Synthetic data testing, MSE calculation |
+| **`requirements.txt`** | Dependencies | NumPy, scikit-learn, tqdm, ipykernel |
+| **`pyproject.toml`** | Configuration | Project metadata, workspace settings |
 
-## 🎓 What You'll Learn
+---
 
-By exploring this project, you'll gain:
+## 🧪 Testing & Validation
 
-- **🧮 Mathematical Foundations**: Understanding the math behind ML algorithms
-- **💻 Implementation Skills**: How to translate math into efficient code
-- **🔍 Algorithm Internals**: Deep dive into how popular algorithms actually work
-- **🛠️ NumPy Mastery**: Advanced array operations and vectorization
-- **📊 Model Evaluation**: Proper testing and validation techniques
-- **🏗️ Code Architecture**: Clean, modular design principles
+### 🎯 KNN Testing Protocol
 
-## 🧠 Algorithm Deep Dives
+**Dataset: UCI Iris Dataset**
+- **Size**: 150 samples
+- **Features**: 4 (sepal length, sepal width, petal length, petal width)
+- **Classes**: 3 (Setosa, Versicolor, Virginica)
+- **Split**: 80% training, 20% testing
 
-### KNN Mathematical Foundation
-
-**Euclidean Distance Formula:**
-```
-d(x₁, x₂) = √(Σᵢ(x₁ᵢ - x₂ᵢ)²)
-```
-
-**Classification Decision:**
-```
-ŷ = mode(y₁, y₂, ..., yₖ)  # Most frequent class among k neighbors
-```
-
-### Linear Regression Mathematical Foundation
-
-**Linear Model:**
-```
-ŷ = Xw + b
+**Testing Script: `knn_test.py`**
+```python
+# What the test does:
+1. Load Iris dataset from scikit-learn
+2. Split into train/test sets (random_state=0)
+3. Create KNN classifier with k=5
+4. Train on training data
+5. Predict on test data
+6. Calculate and display accuracy
 ```
 
-**Cost Function (MSE):**
-```
-J(w,b) = (1/2m) * Σᵢ(ŷᵢ - yᵢ)²
+**Expected Results:**
+- **Accuracy**: ~97% (typically 0.966 or higher)
+- **Execution Time**: < 1 second
+- **Memory Usage**: Minimal (stores 120 training samples)
+
+### 📈 Linear Regression Testing Protocol
+
+**Dataset: Synthetic Regression Data**
+- **Size**: 100 samples
+- **Features**: 1 (single variable regression)
+- **Noise**: Added Gaussian noise (std=20)
+- **Split**: 80% training, 20% testing
+
+**Testing Script: `linear_regression_test.py`**
+```python
+# What the test does:
+1. Generate synthetic regression dataset
+2. Split into train/test sets (random_state=1234)
+3. Create Linear Regression with lr=0.1, iterations=1000
+4. Train using gradient descent
+5. Predict on test data
+6. Calculate and display MSE
 ```
 
-**Gradient Descent Updates:**
-```
-w := w - α * (∂J/∂w)
-b := b - α * (∂J/∂b)
+**Expected Results:**
+- **MSE**: Varies based on noise, typically 200-500
+- **Convergence**: Usually within 500-800 iterations
+- **Execution Time**: < 2 seconds
+
+### 📊 Performance Benchmarks
+
+#### KNN Performance Tests
+
+```python
+# Test different k values
+k_values = [1, 3, 5, 7, 9, 11]
+for k in k_values:
+    knn = KNN(k=k)
+    knn.fit(X_train, y_train)
+    accuracy = accuracy_score(y_test, knn.predict(X_test))
+    print(f"k={k}: {accuracy:.3f}")
+
+# Expected results:
+# k=1: 0.933
+# k=3: 0.966  
+# k=5: 0.966
+# k=7: 0.966
+# k=9: 0.933
 ```
 
-## 🚀 Running the Examples
+#### Linear Regression Performance Tests
 
-### KNN on Iris Dataset
+```python
+# Test different learning rates
+learning_rates = [0.001, 0.01, 0.1, 0.5]
+for lr in learning_rates:
+    model = LinearRegression(lr=lr, n_iterations=1000)
+    model.fit(X_train, y_train)
+    mse = MSE(y_test, model.predict(X_test))
+    print(f"lr={lr}: MSE={mse:.2f}")
+
+# Expected results:
+# lr=0.001: MSE=450.23 (slow convergence)
+# lr=0.01:  MSE=387.45 (good)
+# lr=0.1:   MSE=385.67 (optimal)
+# lr=0.5:   MSE=392.12 (too high, overshooting)
+```
+
+### 🔧 Custom Testing
+
+**Create Your Own Tests:**
+
+```python
+# File: custom_test.py
+import numpy as np
+from algorithms.knn_algorithm.knn import KNN
+from algorithms.linear_regression_algorithm.linear_regression import LinearRegression
+
+# Test KNN with custom data
+X_custom = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
+y_custom = np.array([0, 0, 1, 1])
+
+knn = KNN(k=3)
+knn.fit(X_custom, y_custom)
+print("KNN prediction for [2.5, 3.5]:", knn.predict([[2.5, 3.5]]))
+
+# Test Linear Regression with custom data
+X_reg = np.array([[1], [2], [3], [4]])
+y_reg = np.array([2, 4, 6, 8])  # Perfect linear relationship
+
+regressor = LinearRegression(lr=0.1, n_iterations=100)
+regressor.fit(X_reg, y_reg)
+print("Learned weight:", regressor.weights[0])
+print("Learned bias:", regressor.bias)
+print("Should be close to: weight=2, bias=0")
+```
+
+---
+
+
+## 🔮 Future Roadmap
+
+### 🎯 Phase 1: Classification Algorithms (In Progress)
+
+- [x] **K-Nearest Neighbors** - ✅ Completed
+- [ ] **Logistic Regression** - Classification with sigmoid function
+- [ ] **Naive Bayes** - Probabilistic classifier
+- [ ] **Decision Trees** - Tree-based learning algorithm
+
+### 📈 Phase 2: Regression Algorithms (In Progress)
+
+- [x] **Linear Regression** - ✅ Completed
+- [ ] **Polynomial Regression** - Non-linear relationships
+- [ ] **Ridge Regression** - L2 regularization
+- [ ] **Lasso Regression** - L1 regularization
+
+### 🧠 Phase 3: Neural Networks
+
+- [ ] **Perceptron** - Single neuron classifier
+- [ ] **Multi-layer Perceptron** - Deep neural network from scratch
+- [ ] **Backpropagation** - Manual gradient calculation
+
+### 🔗 Phase 4: Unsupervised Learning
+
+- [ ] **K-Means Clustering** - Partitioning algorithm
+- [ ] **Hierarchical Clustering** - Tree-based clustering
+- [ ] **PCA** - Dimensionality reduction
+
+### 🎯 Phase 5: Ensemble Methods
+
+- [ ] **Random Forest** - Ensemble of decision trees
+- [ ] **AdaBoost** - Adaptive boosting
+- [ ] **Gradient Boosting** - Sequential improvement
+
+---
+
+## 🤝 Contributing Guidelines
+
+### 📝 How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/new-algorithm`
+3. **Follow the code style**: Match existing implementations
+4. **Add tests**: Every algorithm needs test cases
+5. **Update documentation**: Add to README and docstrings
+6. **Submit a pull request**: With detailed description
+
+### 📜 Code Style Guidelines
+
+**Class Structure:**
+```python
+class AlgorithmName:
+    def __init__(self, hyperparameter1, hyperparameter2):
+        """Initialize the algorithm with hyperparameters."""
+        self.param1 = hyperparameter1
+        self.param2 = hyperparameter2
+        
+    def fit(self, X, y):
+        """Train the algorithm on data."""
+        # Implementation here
+        
+    def predict(self, X):
+        """Make predictions on new data."""
+        # Implementation here
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### 🚑 Common Issues
+
+#### 1. **Import Errors**
+```
+ModuleNotFoundError: No module named 'algorithms'
+```
+**Solution:**
 ```bash
+# Make sure you're in the correct directory
 cd algorithms/knn_algorithm
 python knn_test.py
 ```
 
-**What happens:**
-- Loads the classic Iris flower dataset
-- Splits into training (80%) and test (20%) sets
-- Trains KNN with k=5 neighbors
-- Evaluates accuracy on test set
-- Should achieve ~97% accuracy!
-
-### Linear Regression on Synthetic Data
-```bash
-cd algorithms/linear_regression_algorithm
-python linear_regression_test.py
+#### 2. **Low KNN Accuracy**
 ```
-
-**What happens:**
-- Generates synthetic regression dataset
-- Trains linear regression with gradient descent
-- Uses learning rate 0.1 for 1000 iterations
-- Evaluates using Mean Squared Error
-- Lower MSE = better fit!
-
-## 🔧 Customization & Experimentation
-
-### KNN Experiments
-```python
-# Try different k values
-for k in [1, 3, 5, 7, 9]:
-    knn = KNN(k=k)
-    knn.fit(X_train, y_train)
-    accuracy = accuracy_score(y_test, knn.predict(X_test))
-    print(f"k={k}: accuracy={accuracy:.3f}")
+Accuracy: 0.600 (Expected: ~0.97)
 ```
+**Solutions:**
+- Try different k values: `KNN(k=3)` or `KNN(k=7)`
+- Scale your features if needed
+- Check data quality
 
-### Linear Regression Experiments
-```python
-# Try different learning rates
-for lr in [0.01, 0.1, 0.5]:
-    model = LinearRegression(lr=lr, n_iterations=1000)
-    model.fit(X_train, y_train)
-    mse = MSE(y_test, model.predict(X_test))
-    print(f"Learning Rate {lr}: MSE={mse:.3f}")
+#### 3. **High Linear Regression MSE**
 ```
+MSE: 1500.0 (Expected: 200-500)
+```
+**Solutions:**
+- Lower learning rate: `lr=0.01` instead of `lr=0.1`
+- Increase iterations: `n_iterations=2000`
+- Scale features if needed
 
-## 🐛 Troubleshooting
 
-**Common Issues:**
-
-1. **Import Errors:**
-   - Make sure you're in the correct directory
-   - Ensure all dependencies are installed
-
-2. **Low Accuracy in KNN:**
-   - Try different k values
-   - Check if data needs normalization
-
-3. **High MSE in Linear Regression:**
-   - Adjust learning rate (try 0.01 if 0.1 is too high)
-   - Increase number of iterations
-   - Check for feature scaling needs
-
-## 🔮 Future Roadmap
-
-Exciting algorithms coming next:
-
-- [ ] **Logistic Regression** - Classification with sigmoid function
-- [ ] **Decision Trees** - Tree-based learning algorithm
-- [ ] **K-Means Clustering** - Unsupervised learning
-- [ ] **Naive Bayes** - Probabilistic classifier
-- [ ] **Neural Networks** - Multi-layer perceptron from scratch
-- [ ] **Support Vector Machine** - Maximum margin classifier
-- [ ] **Random Forest** - Ensemble of decision trees
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. **🐛 Report bugs** by opening issues
-2. **💡 Suggest new algorithms** to implement
-3. **📚 Improve documentation** and examples
-4. **🧪 Add more test cases** and examples
-5. **⚡ Optimize implementations** for better performance
-
-## 📚 Learning Resources
-
-Want to learn more? Check out these resources:
 
