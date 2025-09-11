@@ -20,7 +20,6 @@
 - [📊 Algorithm Comparisons](#-algorithm-comparisons)
 - [🧠 Mathematical Foundations](#-mathematical-foundations)
 - [📁 Project Structure](#-project-structure)
-- [🧪 Testing & Validation](#-testing--validation)
 - [🔮 Future Roadmap](#-future-roadmap)
 
 ## 🎯 Project Overview
