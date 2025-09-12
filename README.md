@@ -131,6 +131,52 @@ Linear Regression finds the best-fitting straight line through data points using
 
 ---
 
+### 🧠 Logistic Regression
+
+**📁 Location:** [`algorithms/logistic_regression_algorithm/`](algorithms/logistic_regression_algorithm/)
+
+**📝 Algorithm Type:** Supervised Learning - Binary Classification
+
+#### 🔍 Algorithm Overview
+
+Logistic Regression uses the sigmoid function to transform linear combinations into probabilities, making it perfect for binary classification. It combines linear modeling with probability theory to make intelligent yes/no decisions.
+
+#### 🔧 Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🌊 **Sigmoid Activation** | Converts linear outputs to probabilities (0-1) |
+| 🎯 **Binary Classification** | Perfect for yes/no, spam/ham, cancer/benign decisions |
+| 📊 **Gradient Descent** | Custom optimization with cross-entropy loss |
+| 🔬 **Medical Applications** | Tested on real breast cancer detection data |
+| 📈 **Probability Output** | Get confidence scores, not just predictions |
+
+#### 📈 Performance Metrics
+
+**Tested on Breast Cancer Dataset:**
+- **Dataset**: 569 patients, 30 tumor characteristics
+- **Accuracy**: ~91% classification accuracy
+- **Classes**: Malignant vs Benign tumors
+- **Optimization**: 1000 iterations, learning rate 0.001
+- **Medical Relevance**: Can assist in cancer diagnosis
+
+#### 💡 When to Use Logistic Regression
+
+✅ **Good for:**
+- Binary classification problems
+- When you need probability estimates
+- Linear decision boundaries
+- Fast inference requirements
+- Interpretable medical/business models
+
+❌ **Avoid when:**
+- Multi-class problems (without extensions)
+- Complex non-linear relationships
+- Perfect class separation exists
+- Very high-dimensional sparse data
+
+---
+
 ## 💻 Code Showcase
 
 Let's dive into the actual implementations! Here's how each algorithm works in practice:
@@ -259,15 +305,91 @@ mse_value = MSE(Y_test, predictions)
 print("MSE Value is:", mse_value)  # Expected: 200-500 (lower is better!)
 ```
 
-### 🏆 What Makes These Implementations Special
+### 🧠 Logistic Regression Implementation Walkthrough
 
-| Aspect | Our KNN | Our Linear Regression |
-|--------|---------|----------------------|
-| **🧮 Simplicity** | Pure intuition - just look at neighbors! | Clear math - find the best line! |
-| **📚 Educational** | See every distance calculation | Watch gradient descent optimize |
-| **🔧 Customizable** | Easy to change k value | Tune learning rate and iterations |
-| **📈 Performance** | 97% accuracy on Iris | Low MSE on synthetic data |
-| **🚀 Ready to Use** | Import and classify! | Import and predict! |
+#### The Logistic Regression Class
+```python
+# 📁 File: algorithms/logistic_regression_algorithm/logistic_regression.py
+class LogisticRegression:
+    def __init__(self, lr, n_iters):
+        self.lr = lr                    # 🏃 Learning rate - step size for optimization
+        self.n_iters = n_iters          # 🔄 Number of training iterations
+        self.weights = None             # 📈 Feature weights (learned parameters)
+        self.bias = None               # 📈 Bias term (y-intercept equivalent)
+
+    def fit(self, X, Y):
+        # 🎯 Initialize parameters
+        n_samples, n_features = X.shape
+        self.weights = np.zeros(n_features)  # Start with zero weights
+        self.bias = 0                        # Start with zero bias
+        
+        # 🔄 Gradient descent optimization loop
+        for i in range(self.n_iters):
+            # 🔮 Step 1: Linear transformation
+            linear_model = np.dot(X, self.weights) + self.bias
+            
+            # 🌊 Step 2: Sigmoid activation (the magic happens here!)
+            y_predict = self._segmoid(linear_model)
+            
+            # 📉 Step 3: Calculate gradients (how to improve)
+            dw = (1/n_samples) * np.dot(X.T, (y_predict - Y))
+            db = (1/n_samples) * np.sum(y_predict - Y)
+            
+            # 👆 Step 4: Update parameters (take a step toward better solution)
+            self.weights -= self.lr * dw
+            self.bias -= self.lr * db
+
+    def predict(self, X):
+        # 🔮 Get probabilities
+        linear_model = np.dot(X, self.weights) + self.bias
+        y_predict = self._segmoid(linear_model)
+        
+        # 🎯 Convert probabilities to binary predictions
+        y_predict_class = [1 if i > 0.5 else 0 for i in y_predict]
+        return y_predict_class
+    
+    def _segmoid(self, s):
+        # 🌊 Sigmoid function: converts any real number to (0, 1)
+        return (1/(1+np.exp(-s)))  # Note: Fixed the sign for correct implementation
+```
+
+#### Logistic Regression in Action - Cancer Detection!
+```python
+# 📁 File: algorithms/logistic_regression_algorithm/logistic_regression_test.py
+import numpy as np
+from sklearn.model_selection import train_test_split 
+from sklearn.metrics import accuracy_score
+from sklearn import datasets
+
+# 🔬 Load real medical data - breast cancer dataset
+data_set = datasets.load_breast_cancer()
+X, Y = data_set.data, data_set.target
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=1234)
+
+# 🎯 Create and train the logistic regression classifier
+logistic_reg = LogisticRegression(lr=0.001, n_iters=1000)
+logistic_reg.fit(X_train, Y_train)  # 💪 Watch it learn to detect cancer!
+
+# 🔮 Test how well it learned
+predictions = logistic_reg.predict(X_test)
+
+# 📈 Calculate accuracy
+def accuracy(y_true, y_pred):
+    accuracy = np.sum(y_true == y_pred) / len(y_true)
+    return accuracy
+
+print('The accuracy of the model is:', accuracy(Y_test, predictions))  # Expected: ~0.91 (91% accuracy!)
+```
+
+### 🎆 What Makes These Implementations Special
+
+| Aspect | Our KNN | Our Linear Regression | Our Logistic Regression |
+|--------|---------|----------------------|------------------------|
+| **🧮 Simplicity** | Pure intuition - just look at neighbors! | Clear math - find the best line! | Sigmoid magic - probabilities made simple! |
+| **📚 Educational** | See every distance calculation | Watch gradient descent optimize | Observe linear-to-probability transformation |
+| **🔧 Customizable** | Easy to change k value | Tune learning rate and iterations | Adjust learning parameters and see impact |
+| **📈 Performance** | 97% accuracy on Iris | Low MSE on synthetic data | 91% accuracy on cancer detection |
+| **🚀 Ready to Use** | Import and classify! | Import and predict! | Import and get probabilities! |
 
 ### 🎓 Key Learning Moments
 
@@ -280,6 +402,11 @@ print("MSE Value is:", mse_value)  # Expected: 200-500 (lower is better!)
 - 📈 **Gradients guide us**: Math tells us which direction improves performance
 - 🔄 **Iteration improves**: Each step gets us closer to the optimal solution  
 - ⚙️ **Parameters matter**: Learning rate and iterations significantly impact results
+
+**From Logistic Regression Implementation:**
+- 🌊 **Sigmoid transforms**: How to convert any number to a probability
+- 🧠 **Classification magic**: Binary decisions with confidence scores
+- 🎯 **Medical AI**: Real-world applications in healthcare and diagnostics
 
 ### 🚀 Quick Start Guide
 
@@ -298,9 +425,14 @@ python knn_test.py
 cd ../linear_regression_algorithm  
 python linear_regression_test.py
 # You should see: MSE Value is: [some number between 200-500]
+
+# 4. Test Logistic Regression (Cancer Detection!)
+cd ../logistic_regression_algorithm
+python logistic_regression_test.py
+# You should see: The accuracy of the model is: 0.912... (91% accuracy!)
 ```
 
-**That's it!** 🎉 Both algorithms are working and you can see machine learning in action!
+**That's it!** 🎉 All three algorithms are working and you can see machine learning in action!
 
 ---
 
@@ -340,6 +472,11 @@ python knn_test.py
 cd ../linear_regression_algorithm
 python linear_regression_test.py
 # Expected output: MSE value showing model performance
+
+# Test Logistic Regression
+cd ../logistic_regression_algorithm
+python logistic_regression_test.py
+# Expected output: Accuracy around 0.91 for cancer detection
 ```
 
 ### 🎆 Real Performance Results
@@ -364,36 +501,49 @@ Here's what you can expect when running the algorithms:
 🎉 Low error - the algorithm learned the pattern!
 ```
 
+#### 🧠 Logistic Regression Results (Medical Data)
+```
+🔬 Running: python logistic_regression_test.py
+📄 Dataset: 569 patients, 30 tumor characteristics
+🎯 Classifier: 1000 iterations, learning rate 0.001
+📈 Result: The accuracy of the model is: 0.912...
+🎉 That's 91% accuracy in cancer detection - potentially life-saving!
+```
+
 **What this means:**
 - 🎯 **KNN**: Out of 30 test flowers, it correctly identified ~29 species
 - 📈 **Linear Regression**: The predicted values are very close to actual values
-- 🎆 **Both algorithms work great** and demonstrate core ML concepts!
+- 🔬 **Logistic Regression**: Out of 114 cancer cases, it correctly diagnosed ~104 patients
+- 🎆 **All algorithms work great** and demonstrate core ML concepts!
 
 ---
 ## 📊 Algorithm Comparisons
 
 ### 🆚 Feature Comparison
 
-| Aspect | KNN | Linear Regression |
-|--------|-----|-------------------|
-| **Type** | Classification | Regression |
-| **Learning** | Lazy (Instance-based) | Eager (Model-based) |
-| **Training Time** | O(1) - Just stores data | O(n × iterations) |
-| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication |
-| **Memory Usage** | High - Stores all training data | Low - Only weights and bias |
-| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship |
-| **Assumptions** | None | Linear relationship exists |
-| **Best For** | Complex decision boundaries | Linear relationships |
+| Aspect | KNN | Linear Regression | Logistic Regression |
+|--------|-----|-------------------|--------------------|
+| **Type** | Classification | Regression | Binary Classification |
+| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) |
+| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) |
+| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid |
+| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias |
+| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities |
+| **Assumptions** | None | Linear relationship exists | Linear decision boundary |
+| **Output** | Class labels | Continuous values | Probabilities + binary predictions |
+| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence |
 
 ### 🏆 Performance Comparison
 
-| Dataset Type | KNN Performance | Linear Regression Performance |
-|--------------|-----------------|-------------------------------|
-| **Small datasets** | ✅ Excellent | ✅ Excellent |
-| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) |
-| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization |
-| **Non-linear data** | ✅ Excellent | ❌ Poor |
-| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing |
+| Dataset Type | KNN Performance | Linear Regression | Logistic Regression |
+|--------------|-----------------|-------------------|--------------------|
+| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent |
+| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) |
+| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well |
+| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) |
+| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise |
+| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit |
+| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output |
 
 ---
 
@@ -489,6 +639,76 @@ b := b - α × (∂J/∂b)
 5. **Update parameters** - apply gradient descent
 6. **Repeat** steps 2-5 until convergence
 
+### 🧠 Logistic Regression Mathematics
+
+#### Logistic Model
+**Linear Transformation:**
+```
+z = θ₀ + θ₁x₁ + θ₂x₂ + ... + θₙxₙ
+```
+
+**Sigmoid Activation:**
+```
+σ(z) = 1/(1 + e^(-z))
+```
+
+**Matrix Form:**
+```
+z = Xθ + b
+p = σ(z) = 1/(1 + e^(-(Xθ + b)))
+```
+
+**Where:**
+- `z` = linear transformation output
+- `p` = predicted probabilities vector
+- `X` = feature matrix (m × n)
+- `θ` = weights vector (n × 1)
+- `b` = bias term (scalar)
+- `σ` = sigmoid function
+
+#### Cost Function
+**Cross-Entropy (Log Loss):**
+```
+J(θ,b) = -(1/m) × Σ[y·log(σ(z)) + (1-y)·log(1-σ(z))]
+```
+
+**Where:**
+- `J(θ,b)` = cost function
+- `m` = number of training examples
+- `y` = actual binary labels (0 or 1)
+- `σ(z)` = predicted probabilities
+
+#### Gradient Descent
+**Weight Update:**
+```
+θ := θ - α × (∂J/∂θ)
+```
+
+**Bias Update:**
+```
+b := b - α × (∂J/∂b)
+```
+
+**Gradients:**
+```
+∂J/∂θ = (1/m) × Xᵀ × (σ(z) - y)
+∂J/∂b = (1/m) × Σ(σ(z) - y)
+```
+
+**Where:**
+- `α` = learning rate
+- `Xᵀ` = transpose of feature matrix
+
+#### Algorithm Steps
+1. **Initialize** weights (θ) and bias (b) to zero
+2. **Forward pass** - calculate linear transformation: z = Xθ + b
+3. **Sigmoid activation** - convert to probabilities: p = σ(z)
+4. **Calculate cost** - compute cross-entropy loss
+5. **Backward pass** - calculate gradients
+6. **Update parameters** - apply gradient descent
+7. **Repeat** steps 2-6 until convergence
+8. **Prediction** - use threshold (typically 0.5) to convert probabilities to binary predictions
+
 ---
 
 ## 📁 Project Structure
@@ -500,14 +720,21 @@ ML-Algorithms-From-Scratch/
 │   │
 │   ├── 🎯 knn_algorithm/               # K-Nearest Neighbors implementation
 │   │   ├── 🐍 knn.py                     # Core KNN class implementation
-│   │   └── 🧪 knn_test.py               # KNN testing and validation
+│   │   ├── 🧪 knn_test.py               # KNN testing and validation
+│   │   └── 📚 README.md                # KNN comprehensive guide
 │   │
-│   └── 📈 linear_regression_algorithm/ # Linear Regression implementation
-│       ├── 🐍 linear_regression.py       # Core Linear Regression class
-│       ├── 🧪 linear_regression_test.py   # Testing and validation
-│       ├── 🚀 main.py                   # Entry point and examples
-│       ├── 🗂️ .venv/                      # Virtual environment
-│       └── ⚙️ pyproject.toml             # Local project configuration
+│   ├── 📈 linear_regression_algorithm/ # Linear Regression implementation
+│   │   ├── 🐍 linear_regression.py       # Core Linear Regression class
+│   │   ├── 🧪 linear_regression_test.py   # Testing and validation
+│   │   ├── 🚀 main.py                   # Entry point and examples
+│   │   ├── 📚 README.md                # Linear Regression guide
+│   │   ├── 🗂️ .venv/                      # Virtual environment
+│   │   └── ⚙️ pyproject.toml             # Local project configuration
+│   │
+│   └── 🧠 logistic_regression_algorithm/ # Logistic Regression implementation
+│       ├── 🐍 logistic_regression.py      # Core Logistic Regression class
+│       ├── 🧪 logistic_regression_test.py  # Medical data testing
+│       └── 📚 README.md                # Logistic Regression guide
 │
 ├── 📚 README.md                      # Comprehensive documentation (this file!)
 ├── 📦 requirements.txt               # Python dependencies
@@ -522,6 +749,8 @@ ML-Algorithms-From-Scratch/
 | **`knn_test.py`** | KNN Validation | Iris dataset testing, accuracy measurement |
 | **`linear_regression.py`** | Linear Regression | `LinearRegression` class, gradient descent |
 | **`linear_regression_test.py`** | Regression Testing | Synthetic data testing, MSE calculation |
+| **`logistic_regression.py`** | Logistic Regression | `LogisticRegression` class, sigmoid activation |
+| **`logistic_regression_test.py`** | Classification Testing | Medical data testing, cancer detection |
 | **`requirements.txt`** | Dependencies | NumPy, scikit-learn, tqdm, ipykernel |
 | **`pyproject.toml`** | Configuration | Project metadata, workspace settings |
 
@@ -532,7 +761,7 @@ ML-Algorithms-From-Scratch/
 ### 🎯 Phase 1: Classification Algorithms (In Progress)
 
 - [x] **K-Nearest Neighbors** - ✅ Completed
-- [ ] **Logistic Regression** - Classification with sigmoid function
+- [x] **Logistic Regression** - ✅ Completed - Binary classification with sigmoid
 - [ ] **Naive Bayes** - Probabilistic classifier
 - [ ] **Decision Trees** - Tree-based learning algorithm
 

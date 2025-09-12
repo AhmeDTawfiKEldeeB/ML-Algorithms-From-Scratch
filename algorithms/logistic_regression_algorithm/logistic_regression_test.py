@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.model_selection import train_test_split 
-from sklearn.metrics import accuracy_score
 from sklearn import datasets
 data_set=datasets.load_breast_cancer()
 X,Y=data_set.data,data_set.target

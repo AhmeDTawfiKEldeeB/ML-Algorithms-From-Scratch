@@ -27,5 +27,6 @@ class LogisticRegression:
         y_predict=self._segmoid(linear_model)
         y_predict_class=[1 if i>0.5 else 0 for i in y_predict]
         return y_predict_class
+        
     def _segmoid(self,s):
-        return (1/(1+np.exp(s)))
+        return (1/(1+np.exp(-s)))
