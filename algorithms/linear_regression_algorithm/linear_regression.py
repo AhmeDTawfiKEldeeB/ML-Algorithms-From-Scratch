@@ -8,11 +8,11 @@ class LinearRegression:
         self.bias=None
 
     def fit(self,X,Y):
-        # Initialize parameters
+
         n_samples,n_features=X.shape
         self.weights=np.zeros(n_features)
         self.bias=0
-        # Gradient descent
+        
         for i in range(self.n_iterations):
             y_predict=np.dot(X,self.weights)+self.bias
             dw=(1/n_samples)*np.dot(X.T,(y_predict-Y))
