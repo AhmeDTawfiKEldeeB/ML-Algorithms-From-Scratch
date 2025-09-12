@@ -408,32 +408,6 @@ print('The accuracy of the model is:', accuracy(Y_test, predictions))  # Expecte
 - 🧠 **Classification magic**: Binary decisions with confidence scores
 - 🎯 **Medical AI**: Real-world applications in healthcare and diagnostics
 
-### 🚀 Quick Start Guide
-
-**Want to try it right now?** Here's the fastest way to get started:
-
-```bash
-# 1. Navigate to your workspace
-cd "d:\My projects\ML-Algorithms-From-Scratch"
-
-# 2. Test KNN (Classification)
-cd algorithms/knn_algorithm
-python knn_test.py
-# You should see: 0.9666666666666667 (97% accuracy!)
-
-# 3. Test Linear Regression
-cd ../linear_regression_algorithm  
-python linear_regression_test.py
-# You should see: MSE Value is: [some number between 200-500]
-
-# 4. Test Logistic Regression (Cancer Detection!)
-cd ../logistic_regression_algorithm
-python logistic_regression_test.py
-# You should see: The accuracy of the model is: 0.912... (91% accuracy!)
-```
-
-**That's it!** 🎉 All three algorithms are working and you can see machine learning in action!
-
 ---
 
 ## ⚙️ Installation & Setup
