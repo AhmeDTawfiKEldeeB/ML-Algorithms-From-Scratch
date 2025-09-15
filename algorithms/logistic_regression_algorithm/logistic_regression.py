@@ -9,9 +9,17 @@ class LogisticRegression:
         self.bias=None
 
     def fit(self,X,Y):
+<<<<<<< HEAD
         n_samples,n_features=X.shape
         self.weights=np.zeros(n_features)
         self.bias=0
+=======
+        
+        n_samples,n_features=X.shape
+        self.weights=np.zeros(n_features)
+        self.bias=0
+        
+>>>>>>> 6ff06f079b3a5e08a5ca4f5beb3101d3218fdb3a
         for i in range(self.n_iters):
             linear_model=np.dot(X,self.weights)+self.bias
             y_predict=self._segmoid(linear_model)
