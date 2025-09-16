@@ -1,8 +1,12 @@
 from collections import Counter
+
+
+
+
 import numpy as np
 
 def entropy(Y):
-    
+
     hist=np.bincount(Y)
     ps=hist/len(Y)
     return -np.sum([p*np.log2(p) for p in ps if p>0 ])

@@ -53,7 +53,7 @@ class LogisticRegression:
             linear_model = np.dot(X, self.weights) + self.bias
             
             # 2. Sigmoid activation (the magic happens here!)
-            y_predict = self._segmoid(linear_model)
+            y_predict = self._sigmoid(linear_model)
             
             # 3. Calculate gradients
             dw = (1/n_samples) * np.dot(X.T, (y_predict - Y))
@@ -72,9 +72,9 @@ class LogisticRegression:
         y_predict_class = [1 if i > 0.5 else 0 for i in y_predict]
         return y_predict_class
     
-    def _segmoid(self, s):
+    def _sigmoid(self, s):
         # Sigmoid function: converts any real number to (0, 1)
-        return (1/(1+np.exp(-s)))  # Note: There's a typo in original - should be -s
+        return (1/(1+np.exp(-s)))
 ```
 
 ### `logistic_regression_test.py` - Cancer Detection in Action! 🔬
@@ -299,20 +299,16 @@ for lr in learning_rates:
    predictions = model.predict(X_test)  # Predict
    ```
 
-### 🐛 Bug Fix Notice
+### 🐛 Implementation Note
 
-**Important:** There's a small bug in the original sigmoid function:
+**Important:** The original implementation has a small typo in the method name (`_segmoid` instead of `_sigmoid`), but it works correctly! The mathematical implementation is sound:
+
 ```python
-# Original (incorrect):
-def _segmoid(self, s):
-    return (1/(1+np.exp(s)))  # Missing negative sign!
-
-# Fixed version:
-def _sigmoid(self, s):
-    return (1/(1+np.exp(-s)))  # Correct with negative sign
+def _segmoid(self, s):  # Note: typo in method name
+    return (1/(1+np.exp(-s)))  # But math is correct!
 ```
 
-This affects the gradient direction but the algorithm still works due to the nature of gradient descent!
+This demonstrates that even with small naming quirks, the core mathematics drives the success of the algorithm!
 
 ## 🎮 Try These Experiments
 

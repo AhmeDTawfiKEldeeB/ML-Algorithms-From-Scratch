@@ -14,7 +14,8 @@
   - [🎯 K-Nearest Neighbors (KNN)](#-k-nearest-neighbors-knn)
   - [📈 Linear Regression](#-linear-regression)
   - [🧠 Logistic Regression](#-logistic-regression)
-  - [🧠 Naive Bayes](#-naive-bayes)  
+  - [🧠 Naive Bayes](#-naive-bayes)
+  - [🌳 Decision Tree](#-decision-tree)  
 - [💻 Code Showcase](#-code-showcase)
 - [⚙️ Installation & Setup](#️-installation--setup)
 - [📊 Algorithm Comparisons](#-algorithm-comparisons)
@@ -496,6 +497,53 @@ def accuracy(y_true, y_pred):
 print('Naive Bayes classification accuracy', accuracy(Y_test, predictions))  # Expected: ~0.925 (92.5% accuracy!)
 ```
 
+---
+
+### 🌳 Decision Tree
+
+**📁 Location:** [`algorithms/decision_tree_algorithm/`](algorithms/decision_tree_algorithm/)
+
+**📏 Algorithm Type:** Supervised Learning - Classification
+
+#### 🔍 Algorithm Overview
+
+Decision Trees are one of the most intuitive machine learning algorithms that work exactly like human decision making by asking a series of yes/no questions to reach a conclusion. They use information theory to automatically determine the best questions to ask.
+
+#### 🔧 Key Features
+
+| Feature | Description |
+|---------|-------------|
+| ✨ **Information Gain** | Uses entropy to find optimal splits |
+| 🌳 **Tree Structure** | Builds hierarchical decision rules |
+| 📊 **Entropy Calculation** | Measures data "purity" and information content |
+| 🔄 **Recursive Splitting** | Grows tree by repeatedly finding best questions |
+| 🎯 **Binary Decisions** | Each node makes a simple yes/no decision |
+| 📊 **Real Testing** | Validated on breast cancer medical dataset |
+
+#### 📈 Performance Metrics
+
+**Tested on Breast Cancer Dataset:**
+- **Dataset Size**: 569 patients, 30 tumor characteristics
+- **Accuracy**: ~91-92% classification accuracy
+- **Classes**: Malignant vs Benign tumors
+- **Tree Depth**: Configurable (default max_depth=10)
+- **Medical Impact**: Can assist doctors in cancer diagnosis! 🏥
+
+#### 💡 When to Use Decision Trees
+
+✅ **Good for:**
+- Interpretable models (can explain every decision)
+- Mixed data types (numerical and categorical)
+- Non-linear relationships
+- Feature selection (automatically identifies important features)
+- Medical diagnosis (doctors can follow the logic)
+
+❌ **Avoid when:**
+- Overfitting is a major concern
+- Data is very noisy
+- Linear relationships dominate
+- You need very stable models
+
 ### 🎆 What Makes These Implementations Special
 
 | Aspect | Our KNN | Our Linear Regression | Our Logistic Regression | Our Naive Bayes |
@@ -577,6 +625,11 @@ python logistic_regression_test.py
 cd ../naive_bayes_algorithm
 python naive_bayes_test.py
 # Expected output: Accuracy around 0.925 for classification
+
+# Test Decision Tree
+cd ../decision_tree_algorithm
+python decision_tree_test.py
+# Expected output: Accuracy around 0.91-0.92 for cancer detection
 ```
 
 ### 🎆 Real Performance Results
@@ -631,31 +684,32 @@ Here's what you can expect when running the algorithms:
 
 ### 🆚 Feature Comparison
 
-| Aspect | KNN | Linear Regression | Logistic Regression | Naive Bayes |
-|--------|-----|-------------------|--------------------|-------------|
-| **Type** | Classification | Regression | Binary Classification | Probabilistic Classification |
-| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) | Eager (Statistical) |
-| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) | O(n) - Statistical calculations |
-| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid | O(d) - Probability calculations |
-| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias | Low - Only statistical summaries |
-| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities | High - Probabilistic reasoning |
-| **Assumptions** | None | Linear relationship exists | Linear decision boundary | Feature independence |
-| **Output** | Class labels | Continuous values | Probabilities + binary predictions | Probabilities + class predictions |
-| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence | Text classification, small data |
+| Aspect | KNN | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree |
+|--------|-----|-------------------|--------------------|-------------|---------------|
+| **Type** | Classification | Regression | Binary Classification | Probabilistic Classification | Classification |
+| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) | Eager (Statistical) | Eager (Tree-based) |
+| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) | O(n) - Statistical calculations | O(n × log n × features) |
+| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid | O(d) - Probability calculations | O(depth) - Tree traversal |
+| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias | Low - Only statistical summaries | Medium - Stores tree structure |
+| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities | High - Probabilistic reasoning | Very High - Clear decision rules |
+| **Assumptions** | None | Linear relationship exists | Linear decision boundary | Feature independence | None |
+| **Output** | Class labels | Continuous values | Probabilities + binary predictions | Probabilities + class predictions | Class labels + decision path |
+| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence | Text classification, small data | Interpretable non-linear models |
 
 ### 🏆 Performance Comparison
 
-| Dataset Type | KNN Performance | Linear Regression | Logistic Regression | Naive Bayes |
-|--------------|-----------------|-------------------|--------------------|-------------|
-| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent |
-| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) |
-| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well | ✅ Handles well |
-| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) | ❌ Assumes normal distribution |
-| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise | ✅ Robust with smoothing |
-| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit | ✅ Great fit |
-| **Multi-class classification** | ✅ Natural fit | ❌ Not suitable | ❌ Needs extensions | ✅ Natural fit |
-| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output | ✅ Natural probability output |
-| **Text classification** | ❌ Poor for text | ❌ Not suitable | ❌ Needs feature engineering | ✅ Excellent |
+| Dataset Type | KNN Performance | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree |
+|--------------|-----------------|-------------------|--------------------|-------------|---------------|
+| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent |
+| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) |
+| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well | ✅ Handles well | ✅ Good (automatic feature selection) |
+| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) | ❌ Assumes normal distribution | ✅ Excellent |
+| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise | ✅ Robust with smoothing | ❌ Can overfit to noise |
+| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit | ✅ Great fit | ✅ Excellent |
+| **Multi-class classification** | ✅ Natural fit | ❌ Not suitable | ❌ Needs extensions | ✅ Natural fit | ✅ Natural fit |
+| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output | ✅ Natural probability output | ❌ No built-in probabilities |
+| **Text classification** | ❌ Poor for text | ❌ Not suitable | ❌ Needs feature engineering | ✅ Excellent | ✅ Good with proper encoding |
+| **Interpretability** | ✅ Shows examples | ✅ Linear equation | ✅ Feature weights | ✅ Probabilistic reasoning | ✅ Clear decision rules |
 
 ---
 
@@ -917,6 +971,8 @@ ML-Algorithms-From-Scratch/
 | **`logistic_regression_test.py`** | Classification Testing | Medical data testing, cancer detection |
 | **`naive_bayes.py`** | Naive Bayes | `NaiveBayes` class, Gaussian PDF, Bayes' theorem |
 | **`naive_bayes_test.py`** | Probabilistic Testing | Synthetic data testing, statistical classification |
+| **`decision_tree.py`** | Decision Tree | `DecisionTree` class, entropy calculation, information gain |
+| **`decision_tree_test.py`** | Tree Testing | Medical data testing, cancer diagnosis |
 | **`requirements.txt`** | Dependencies | NumPy, scikit-learn, tqdm, ipykernel |
 | **`pyproject.toml`** | Configuration | Project metadata, workspace settings |
 
@@ -929,7 +985,7 @@ ML-Algorithms-From-Scratch/
 - [x] **K-Nearest Neighbors** - ✅ Completed
 - [x] **Logistic Regression** - ✅ Completed - Binary classification with sigmoid
 - [x] **Naive Bayes** - ✅ Completed - Probabilistic classification using Bayes' theorem
-- [ ] **Decision Trees** - Tree-based learning algorithm
+- [x] **Decision Trees** - ✅ Completed - Tree-based learning with information theory
 
 ### 📈 Phase 2: Regression Algorithms (In Progress)
 
