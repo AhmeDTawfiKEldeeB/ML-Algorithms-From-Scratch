@@ -15,7 +15,8 @@
   - [📈 Linear Regression](#-linear-regression)
   - [🧠 Logistic Regression](#-logistic-regression)
   - [🧠 Naive Bayes](#-naive-bayes)
-  - [🌳 Decision Tree](#-decision-tree)  
+  - [🌳 Decision Tree](#-decision-tree)
+  - [🌲 Random Forest](#-random-forest)  
 - [💻 Code Showcase](#-code-showcase)
 - [⚙️ Installation & Setup](#️-installation--setup)
 - [📊 Algorithm Comparisons](#-algorithm-comparisons)
@@ -544,6 +545,54 @@ Decision Trees are one of the most intuitive machine learning algorithms that wo
 - Linear relationships dominate
 - You need very stable models
 
+---
+
+### 🌲 Random Forest
+
+**📁 Location:** [`algorithms/random_forest_algorithm/`](algorithms/random_forest_algorithm/)
+
+**📏 Algorithm Type:** Supervised Learning - Ensemble Classification
+
+#### 🔍 Algorithm Overview
+
+Random Forest is a powerful ensemble learning algorithm that combines multiple decision trees to create a robust, accurate classifier. It uses bootstrap sampling (bagging) and feature randomness to reduce overfitting and improve generalization.
+
+#### 🔧 Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🌲 **Ensemble Learning** | Combines multiple decision trees for better performance |
+| 🎲 **Bootstrap Sampling** | Uses random sampling with replacement (bagging) |
+| 🔀 **Feature Randomness** | Each tree considers random subset of features |
+| 🗳️ **Democratic Voting** | Final prediction based on majority vote |
+| 🛡️ **Overfitting Resistance** | Ensemble reduces variance and overfitting |
+| 🏥 **Medical Testing** | Validated on breast cancer diagnosis dataset |
+
+#### 📈 Performance Metrics
+
+**Tested on Breast Cancer Dataset:**
+- **Dataset Size**: 569 patients, 30 tumor characteristics
+- **Accuracy**: ~89% classification accuracy
+- **Ensemble Size**: 3 trees (configurable up to hundreds)
+- **Robustness**: More stable than single decision trees
+- **Medical Impact**: Ensemble approach increases diagnostic confidence! 🏥
+
+#### 💡 When to Use Random Forest
+
+✅ **Good for:**
+- Almost any classification problem (very versatile)
+- Noisy datasets (robust to outliers)
+- Feature importance analysis
+- When you need good performance quickly
+- Mixed data types (numerical and categorical)
+- Medium to large datasets
+
+❌ **Avoid when:**
+- Very small datasets (ensemble overhead not worth it)
+- Real-time predictions needed (slower than single models)
+- Memory is severely constrained
+- Linear relationships dominate
+
 ### 🎆 What Makes These Implementations Special
 
 | Aspect | Our KNN | Our Linear Regression | Our Logistic Regression | Our Naive Bayes |
@@ -630,6 +679,11 @@ python naive_bayes_test.py
 cd ../decision_tree_algorithm
 python decision_tree_test.py
 # Expected output: Accuracy around 0.91-0.92 for cancer detection
+
+# Test Random Forest
+cd ../random_forest_algorithm
+python random_forest_test.py
+# Expected output: Accuracy around 0.89 for ensemble cancer detection
 ```
 
 ### 🎆 Real Performance Results
@@ -672,11 +726,31 @@ Here's what you can expect when running the algorithms:
 🎉 That's 92.5% accuracy with instant training!
 ```
 
-**What this means:****
+#### 🌳 Decision Tree Results (Medical Data)
+```
+🌳 Running: python decision_tree_test.py
+📄 Dataset: 569 patients, 30 tumor characteristics
+🎯 Classifier: Decision Tree with max_depth=10
+📈 Result: Accuracy: 0.9210526315789473
+🎉 That's 92% accuracy - excellent interpretable performance!
+```
+
+#### 🌲 Random Forest Results (Ensemble Medical Data)
+```
+🌲 Running: python random_forest_test.py
+📄 Dataset: 569 patients, 30 tumor characteristics  
+🎯 Classifier: Random Forest with 3 trees, max_depth=10
+📈 Result: Accuracy: 0.8947368421052632
+🎉 That's 89% accuracy - robust ensemble performance!
+```
+
+**What this means:**
 - 🎯 **KNN**: Out of 30 test flowers, it correctly identified ~29 species
 - 📈 **Linear Regression**: The predicted values are very close to actual values
 - 🔬 **Logistic Regression**: Out of 114 cancer cases, it correctly diagnosed ~104 patients
 - 🧠 **Naive Bayes**: Out of 200 test samples, it correctly classified ~185 using pure statistics
+- 🌳 **Decision Tree**: Out of 114 cancer cases, it correctly diagnosed ~105 with clear decision rules
+- 🌲 **Random Forest**: Out of 114 cancer cases, it correctly diagnosed ~102 using ensemble wisdom
 - 🎆 **All algorithms work great** and demonstrate core ML concepts!
 
 ---
@@ -684,32 +758,33 @@ Here's what you can expect when running the algorithms:
 
 ### 🆚 Feature Comparison
 
-| Aspect | KNN | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree |
-|--------|-----|-------------------|--------------------|-------------|---------------|
-| **Type** | Classification | Regression | Binary Classification | Probabilistic Classification | Classification |
-| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) | Eager (Statistical) | Eager (Tree-based) |
-| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) | O(n) - Statistical calculations | O(n × log n × features) |
-| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid | O(d) - Probability calculations | O(depth) - Tree traversal |
-| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias | Low - Only statistical summaries | Medium - Stores tree structure |
-| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities | High - Probabilistic reasoning | Very High - Clear decision rules |
-| **Assumptions** | None | Linear relationship exists | Linear decision boundary | Feature independence | None |
-| **Output** | Class labels | Continuous values | Probabilities + binary predictions | Probabilities + class predictions | Class labels + decision path |
-| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence | Text classification, small data | Interpretable non-linear models |
+| Aspect | KNN | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree | Random Forest |
+|--------|-----|-------------------|--------------------|-------------|---------------|---------------|
+| **Type** | Classification | Regression | Binary Classification | Probabilistic Classification | Classification | Ensemble Classification |
+| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) | Eager (Statistical) | Eager (Tree-based) | Eager (Ensemble-based) |
+| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) | O(n) - Statistical calculations | O(n × log n × features) | O(n_trees × n × log n) |
+| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid | O(d) - Probability calculations | O(depth) - Tree traversal | O(n_trees × depth) |
+| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias | Low - Only statistical summaries | Medium - Stores tree structure | High - Stores multiple trees |
+| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities | High - Probabilistic reasoning | Very High - Clear decision rules | Medium - Ensemble of rules |
+| **Assumptions** | None | Linear relationship exists | Linear decision boundary | Feature independence | None | None |
+| **Output** | Class labels | Continuous values | Probabilities + binary predictions | Probabilities + class predictions | Class labels + decision path | Class labels + confidence |
+| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence | Text classification, small data | Interpretable non-linear models | Robust general-purpose classification |
 
 ### 🏆 Performance Comparison
 
-| Dataset Type | KNN Performance | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree |
-|--------------|-----------------|-------------------|--------------------|-------------|---------------|
-| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent |
-| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) |
-| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well | ✅ Handles well | ✅ Good (automatic feature selection) |
-| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) | ❌ Assumes normal distribution | ✅ Excellent |
-| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise | ✅ Robust with smoothing | ❌ Can overfit to noise |
-| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit | ✅ Great fit | ✅ Excellent |
-| **Multi-class classification** | ✅ Natural fit | ❌ Not suitable | ❌ Needs extensions | ✅ Natural fit | ✅ Natural fit |
-| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output | ✅ Natural probability output | ❌ No built-in probabilities |
-| **Text classification** | ❌ Poor for text | ❌ Not suitable | ❌ Needs feature engineering | ✅ Excellent | ✅ Good with proper encoding |
-| **Interpretability** | ✅ Shows examples | ✅ Linear equation | ✅ Feature weights | ✅ Probabilistic reasoning | ✅ Clear decision rules |
+| Dataset Type | KNN Performance | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree | Random Forest |
+|--------------|-----------------|-------------------|--------------------|-------------|---------------|---------------|
+| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent |
+| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (parallel trees) |
+| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well | ✅ Handles well | ✅ Good (automatic feature selection) | ✅ Excellent (feature sampling) |
+| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) | ❌ Assumes normal distribution | ✅ Excellent | ✅ Excellent |
+| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise | ✅ Robust with smoothing | ❌ Can overfit to noise | ✅ Very robust (ensemble averaging) |
+| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit | ✅ Great fit | ✅ Excellent | ✅ Excellent |
+| **Multi-class classification** | ✅ Natural fit | ❌ Not suitable | ❌ Needs extensions | ✅ Natural fit | ✅ Natural fit | ✅ Natural fit |
+| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output | ✅ Natural probability output | ❌ No built-in probabilities | ✅ Vote-based confidence |
+| **Text classification** | ❌ Poor for text | ❌ Not suitable | ❌ Needs feature engineering | ✅ Excellent | ✅ Good with proper encoding | ✅ Good with proper encoding |
+| **Interpretability** | ✅ Shows examples | ✅ Linear equation | ✅ Feature weights | ✅ Probabilistic reasoning | ✅ Clear decision rules | 🟡 Ensemble of rules (less clear) |
+| **Overfitting resistance** | ✅ Generally robust | ❌ Can overfit | ❌ Can overfit | ✅ Good | ❌ Prone to overfitting | ✅ Very resistant (key strength) |
 
 ---
 
@@ -973,6 +1048,8 @@ ML-Algorithms-From-Scratch/
 | **`naive_bayes_test.py`** | Probabilistic Testing | Synthetic data testing, statistical classification |
 | **`decision_tree.py`** | Decision Tree | `DecisionTree` class, entropy calculation, information gain |
 | **`decision_tree_test.py`** | Tree Testing | Medical data testing, cancer diagnosis |
+| **`random_forest.py`** | Random Forest | `RandomForest` class, bootstrap sampling, ensemble voting |
+| **`random_forest_test.py`** | Ensemble Testing | Medical data testing, ensemble cancer diagnosis |
 | **`requirements.txt`** | Dependencies | NumPy, scikit-learn, tqdm, ipykernel |
 | **`pyproject.toml`** | Configuration | Project metadata, workspace settings |
 
@@ -1000,9 +1077,9 @@ ML-Algorithms-From-Scratch/
 - [ ] **Hierarchical Clustering** - Tree-based clustering
 - [ ] **PCA** - Dimensionality reduction
 
-### 🎯 Phase 5: Ensemble Methods
+### 🎯 Phase 5: Ensemble Methods (In Progress)
 
-- [ ] **Random Forest** - Ensemble of decision trees
+- [x] **Random Forest** - ✅ Completed - Ensemble of decision trees with bootstrap sampling
 - [ ] **AdaBoost** - Adaptive boosting
 - [ ] **Gradient Boosting** - Sequential improvement
 

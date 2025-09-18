@@ -23,7 +23,7 @@ class RandomForest:
         for _ in range(self.n_trees):
             tree=DecisionTree(max_depth=self.max_depth,min_samples_split=self.min_samples_split,n_feats=self.n_feats)
             X_sample,Y_sample=bootstrap_sample(X,Y)
-            tree.fit(X,Y)
+            tree.fit(X_sample,Y_sample)
             self.trees.append(tree)
     def predict(self,X):
         tree_preds=[tree.predict(X) for tree in self.trees]
