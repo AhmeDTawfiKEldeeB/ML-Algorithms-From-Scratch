@@ -16,7 +16,8 @@
   - [🧠 Logistic Regression](#-logistic-regression)
   - [🧠 Naive Bayes](#-naive-bayes)
   - [🌳 Decision Tree](#-decision-tree)
-  - [🌲 Random Forest](#-random-forest)  
+  - [🌲 Random Forest](#-random-forest)
+  - [📊 Principal Component Analysis (PCA)](#-principal-component-analysis-pca)  
 - [💻 Code Showcase](#-code-showcase)
 - [⚙️ Installation & Setup](#️-installation--setup)
 - [📊 Algorithm Comparisons](#-algorithm-comparisons)
@@ -593,6 +594,181 @@ Random Forest is a powerful ensemble learning algorithm that combines multiple d
 - Memory is severely constrained
 - Linear relationships dominate
 
+---
+
+### 📊 Principal Component Analysis (PCA)
+
+**📁 Location:** [`algorithms/pca_algorithm/`](algorithms/pca_algorithm/)
+
+**📝 Algorithm Type:** Unsupervised Learning - Dimensionality Reduction
+
+#### 🔍 Algorithm Overview
+
+Principal Component Analysis (PCA) is a powerful dimensionality reduction technique that transforms high-dimensional data into a lower-dimensional space while preserving maximum variance. It finds the "best camera angles" to capture the most important features of your data, making complex datasets visualizable and more manageable.
+
+#### 🔧 Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 📊 **Eigendecomposition** | Uses mathematical eigenvalues and eigenvectors for optimal projections |
+| 🎯 **Variance Preservation** | Maintains maximum data spread in reduced dimensions |
+| 📈 **Data Visualization** | Transforms high-D data into 2D/3D for plotting |
+| 🧮 **Pure Mathematics** | Built from scratch using only NumPy linear algebra |
+| 🌺 **Real Testing** | Validated on famous Iris dataset (4D → 2D reduction) |
+| ⚡ **Efficient Transform** | Fast matrix operations for data projection |
+
+#### 📈 Performance Metrics
+
+**Tested on Iris Dataset:**
+- **Original Dimensions**: 4 features (sepal & petal measurements)
+- **Reduced Dimensions**: 2 principal components for visualization
+- **Data Preservation**: Maintains key patterns and species clusters
+- **Visualization**: Clear separation of iris species in 2D space
+- **Speed**: Instant transformation for small-medium datasets
+
+#### 💡 When to Use PCA
+
+✅ **Good for:**
+- High-dimensional data visualization (scatter plots, exploration)
+- Data compression and noise reduction
+- Feature extraction before other ML algorithms
+- Exploratory data analysis and pattern discovery
+- Image compression and computer vision preprocessing
+- Removing correlated features and multicollinearity
+
+❌ **Avoid when:**
+- You need interpretable original features
+- Data is already low-dimensional
+- Linear relationships don't capture data structure
+- Sparse data (many zeros) where non-linear methods work better
+
+#### 🎯 PCA Implementation Walkthrough
+
+**The PCA Class:**
+```python
+# 📁 File: algorithms/pca_algorithm/pca.py
+class PCA:
+    def __init__(self, n_components):
+        self.n_components = n_components  # Number of dimensions to reduce to
+        self.components = None           # Principal components (directions)
+        self.mean = None                # Data mean for centering
+    
+    def fit(self, X):
+        # 📊 Step 1: Center the data (subtract mean)
+        self.mean = np.mean(X, axis=0)
+        X = X - self.mean
+        
+        # 🧮 Step 2: Calculate covariance matrix
+        cov = np.cov(X.T)
+        
+        # ⚡ Step 3: Find eigenvalues and eigenvectors
+        eigenvalues, eigenvectors = np.linalg.eig(cov)
+        eigenvectors = eigenvectors.T
+        
+        # 📈 Step 4: Sort by importance (eigenvalue magnitude)
+        idxs = np.argsort(eigenvalues)[::-1]
+        eigenvectors = eigenvectors[idxs]
+        eigenvalues = eigenvalues[idxs]
+        
+        # 🎯 Step 5: Select top components
+        self.components = eigenvectors[:self.n_components]
+    
+    def transform(self, X):
+        # ✅ Safety check
+        if self.components is None:
+            raise ValueError("PCA model has not been fitted yet. Call fit() first.")
+        
+        # 📊 Center and project data
+        X = X - self.mean
+        return np.dot(X, self.components.T)
+```
+
+**PCA in Action - Iris Visualization:**
+```python
+# 📁 File: algorithms/pca_algorithm/pca_test.py
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import datasets
+
+# 🌺 Load famous Iris dataset (4D)
+data = datasets.load_iris()
+X = data.data  # 4 features: sepal length, sepal width, petal length, petal width
+y = data.target  # 3 species: setosa, versicolor, virginica
+
+# 🎯 Apply PCA for 2D visualization
+from pca import PCA
+pca = PCA(2)  # Reduce from 4D to 2D
+pca.fit(X)
+X_projected = pca.transform(X)
+
+print("Shape of X:", X.shape)              # (150, 4) - Original 4D
+print("Shape of transformed X:", X_projected.shape)  # (150, 2) - Reduced 2D
+
+# 📈 Visualize in 2D space
+x1 = X_projected[:, 0]  # First principal component
+x2 = X_projected[:, 1]  # Second principal component
+
+plt.scatter(x1, x2, c=y, edgecolor="none", alpha=0.8, 
+           cmap=plt.cm.get_cmap("viridis", 3))
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.colorbar()
+plt.show()
+# Result: Beautiful 2D visualization showing clear species clusters! 🌺
+```
+
+#### 🧠 Mathematical Foundation
+
+**Core PCA Mathematics:**
+
+1. **Data Centering:**
+   ```
+   X_centered = X - μ
+   ```
+   Where μ is the mean vector
+
+2. **Covariance Matrix:**
+   ```
+   C = (1/n) × X_centered^T × X_centered
+   ```
+   Captures how features vary together
+
+3. **Eigendecomposition:**
+   ```
+   C × v = λ × v
+   ```
+   Where v = eigenvectors (principal components), λ = eigenvalues (importance)
+
+4. **Data Transformation:**
+   ```
+   X_reduced = X_centered × V^T
+   ```
+   Where V contains the top k eigenvectors
+
+**What the Math Means:**
+- **Eigenvectors** = directions of maximum variance in data
+- **Eigenvalues** = amount of variance captured in each direction
+- **Principal Components** = new coordinate system aligned with data patterns
+- **Projection** = expressing data in the new reduced coordinate system
+
+#### 🎓 Key Learning Insights
+
+**From PCA Implementation:**
+- 🧮 **Linear Algebra Magic**: Eigendecomposition reveals data structure
+- 📊 **Variance is Information**: Directions with high variance contain important patterns
+- 🎯 **Dimensionality vs Information**: We can reduce dimensions while keeping essential information
+- 📈 **Visualization Power**: High-dimensional data becomes interpretable in 2D/3D
+- ⚡ **Mathematical Elegance**: Complex dimensionality reduction achieved through pure linear algebra
+
+#### 🌟 Real-World Applications
+
+- **🖼️ Image Compression**: Reduce image file sizes while maintaining visual quality
+- **📊 Data Visualization**: Plot high-dimensional datasets in 2D/3D for human interpretation
+- **🧬 Genomics**: Analyze gene expression patterns across thousands of genes
+- **📈 Finance**: Identify key market factors from hundreds of stock prices
+- **🤖 Machine Learning**: Feature extraction and preprocessing for other algorithms
+- **📸 Computer Vision**: Face recognition and image processing applications
+
 ### 🎆 What Makes These Implementations Special
 
 | Aspect | Our KNN | Our Linear Regression | Our Logistic Regression | Our Naive Bayes |
@@ -684,6 +860,11 @@ python decision_tree_test.py
 cd ../random_forest_algorithm
 python random_forest_test.py
 # Expected output: Accuracy around 0.89 for ensemble cancer detection
+
+# Test PCA
+cd ../pca_algorithm
+python pca_test.py
+# Expected output: Beautiful 2D visualization of Iris dataset clusters
 ```
 
 ### 🎆 Real Performance Results
@@ -744,6 +925,15 @@ Here's what you can expect when running the algorithms:
 🎉 That's 89% accuracy - robust ensemble performance!
 ```
 
+#### 📊 PCA Results (Iris Visualization)
+```
+🌺 Running: python pca_test.py
+📄 Dataset: 150 iris flowers, 4 features (sepal & petal measurements)
+🎯 Transformer: PCA reducing from 4D to 2D
+📈 Result: Shape of X: (150, 4) → Shape of transformed X: (150, 2)
+🎉 Perfect dimensionality reduction with beautiful species clustering!
+```
+
 **What this means:**
 - 🎯 **KNN**: Out of 30 test flowers, it correctly identified ~29 species
 - 📈 **Linear Regression**: The predicted values are very close to actual values
@@ -751,6 +941,7 @@ Here's what you can expect when running the algorithms:
 - 🧠 **Naive Bayes**: Out of 200 test samples, it correctly classified ~185 using pure statistics
 - 🌳 **Decision Tree**: Out of 114 cancer cases, it correctly diagnosed ~105 with clear decision rules
 - 🌲 **Random Forest**: Out of 114 cancer cases, it correctly diagnosed ~102 using ensemble wisdom
+- 📊 **PCA**: Successfully transformed 4D iris data into clear 2D visualization with preserved species patterns
 - 🎆 **All algorithms work great** and demonstrate core ML concepts!
 
 ---
@@ -758,33 +949,34 @@ Here's what you can expect when running the algorithms:
 
 ### 🆚 Feature Comparison
 
-| Aspect | KNN | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree | Random Forest |
-|--------|-----|-------------------|--------------------|-------------|---------------|---------------|
-| **Type** | Classification | Regression | Binary Classification | Probabilistic Classification | Classification | Ensemble Classification |
-| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) | Eager (Statistical) | Eager (Tree-based) | Eager (Ensemble-based) |
-| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) | O(n) - Statistical calculations | O(n × log n × features) | O(n_trees × n × log n) |
-| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid | O(d) - Probability calculations | O(depth) - Tree traversal | O(n_trees × depth) |
-| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias | Low - Only statistical summaries | Medium - Stores tree structure | High - Stores multiple trees |
-| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities | High - Probabilistic reasoning | Very High - Clear decision rules | Medium - Ensemble of rules |
-| **Assumptions** | None | Linear relationship exists | Linear decision boundary | Feature independence | None | None |
-| **Output** | Class labels | Continuous values | Probabilities + binary predictions | Probabilities + class predictions | Class labels + decision path | Class labels + confidence |
-| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence | Text classification, small data | Interpretable non-linear models | Robust general-purpose classification |
+| Aspect | KNN | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree | Random Forest | PCA |
+|--------|-----|-------------------|--------------------|-------------|---------------|---------------|-----|
+| **Type** | Classification | Regression | Binary Classification | Probabilistic Classification | Classification | Ensemble Classification | Dimensionality Reduction |
+| **Learning** | Lazy (Instance-based) | Eager (Model-based) | Eager (Model-based) | Eager (Statistical) | Eager (Tree-based) | Eager (Ensemble-based) | Eager (Transform-based) |
+| **Training Time** | O(1) - Just stores data | O(n × iterations) | O(n × iterations) | O(n) - Statistical calculations | O(n × log n × features) | O(n_trees × n × log n) | O(n × p²) - Eigendecomposition |
+| **Prediction Time** | O(n × d) - Calculate all distances | O(d) - Simple matrix multiplication | O(d) - Linear + sigmoid | O(d) - Probability calculations | O(depth) - Tree traversal | O(n_trees × depth) | O(p × k) - Matrix projection |
+| **Memory Usage** | High - Stores all training data | Low - Only weights and bias | Low - Only weights and bias | Low - Only statistical summaries | Medium - Stores tree structure | High - Stores multiple trees | Low - Only principal components |
+| **Interpretability** | Medium - Shows similar examples | High - Clear linear relationship | High - Feature importance + probabilities | High - Probabilistic reasoning | Very High - Clear decision rules | Medium - Ensemble of rules | Medium - Linear combinations |
+| **Assumptions** | None | Linear relationship exists | Linear decision boundary | Feature independence | None | None | Linear combinations capture variance |
+| **Output** | Class labels | Continuous values | Probabilities + binary predictions | Probabilities + class predictions | Class labels + decision path | Class labels + confidence | Transformed feature vectors |
+| **Best For** | Complex decision boundaries | Linear relationships | Binary decisions with confidence | Text classification, small data | Interpretable non-linear models | Robust general-purpose classification | Visualization, noise reduction |
 
 ### 🏆 Performance Comparison
 
-| Dataset Type | KNN Performance | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree | Random Forest |
-|--------------|-----------------|-------------------|--------------------|-------------|---------------|---------------|
-| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent |
-| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (parallel trees) |
-| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well | ✅ Handles well | ✅ Good (automatic feature selection) | ✅ Excellent (feature sampling) |
-| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) | ❌ Assumes normal distribution | ✅ Excellent | ✅ Excellent |
-| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise | ✅ Robust with smoothing | ❌ Can overfit to noise | ✅ Very robust (ensemble averaging) |
-| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit | ✅ Great fit | ✅ Excellent | ✅ Excellent |
-| **Multi-class classification** | ✅ Natural fit | ❌ Not suitable | ❌ Needs extensions | ✅ Natural fit | ✅ Natural fit | ✅ Natural fit |
-| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output | ✅ Natural probability output | ❌ No built-in probabilities | ✅ Vote-based confidence |
-| **Text classification** | ❌ Poor for text | ❌ Not suitable | ❌ Needs feature engineering | ✅ Excellent | ✅ Good with proper encoding | ✅ Good with proper encoding |
-| **Interpretability** | ✅ Shows examples | ✅ Linear equation | ✅ Feature weights | ✅ Probabilistic reasoning | ✅ Clear decision rules | 🟡 Ensemble of rules (less clear) |
-| **Overfitting resistance** | ✅ Generally robust | ❌ Can overfit | ❌ Can overfit | ✅ Good | ❌ Prone to overfitting | ✅ Very resistant (key strength) |
+| Dataset Type | KNN Performance | Linear Regression | Logistic Regression | Naive Bayes | Decision Tree | Random Forest | PCA |
+|--------------|-----------------|-------------------|--------------------|-------------|---------------|---------------|-----|
+| **Small datasets** | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent | ✅ Excellent |
+| **Large datasets** | ❌ Poor (slow) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (fast) | ✅ Good (parallel trees) | ✅ Good (linear algebra) |
+| **High dimensions** | ❌ Curse of dimensionality | ✅ Handles well with regularization | ✅ Handles reasonably well | ✅ Handles well | ✅ Good (automatic feature selection) | ✅ Excellent (feature sampling) | ✅ Excellent (purpose-built for high-D) |
+| **Non-linear data** | ✅ Excellent | ❌ Poor | ❌ Poor (linear boundary only) | ❌ Assumes normal distribution | ✅ Excellent | ✅ Excellent | ❌ Linear projections only |
+| **Noisy data** | ❌ Sensitive to outliers | ✅ Robust with proper preprocessing | ✅ Robust to moderate noise | ✅ Robust with smoothing | ❌ Can overfit to noise | ✅ Very robust (ensemble averaging) | ✅ Good (noise reduction) |
+| **Binary classification** | ✅ Works but overkill | ❌ Not suitable | ✅ Perfect fit | ✅ Great fit | ✅ Excellent | ✅ Excellent | ❌ Not classification algorithm |
+| **Multi-class classification** | ✅ Natural fit | ❌ Not suitable | ❌ Needs extensions | ✅ Natural fit | ✅ Natural fit | ✅ Natural fit | ❌ Not classification algorithm |
+| **Probability estimates** | ❌ No built-in probabilities | ❌ Not applicable | ✅ Natural probability output | ✅ Natural probability output | ❌ No built-in probabilities | ✅ Vote-based confidence | ❌ Not applicable |
+| **Text classification** | ❌ Poor for text | ❌ Not suitable | ❌ Needs feature engineering | ✅ Excellent | ✅ Good with proper encoding | ✅ Good with proper encoding | ✅ Good for preprocessing |
+| **Interpretability** | ✅ Shows examples | ✅ Linear equation | ✅ Feature weights | ✅ Probabilistic reasoning | ✅ Clear decision rules | 🟡 Ensemble of rules (less clear) | 🟡 Linear combinations |
+| **Overfitting resistance** | ✅ Generally robust | ❌ Can overfit | ❌ Can overfit | ✅ Good | ❌ Prone to overfitting | ✅ Very resistant (key strength) | ✅ Good (dimensionality reduction) |
+| **Data visualization** | ❌ Not visualization tool | ❌ Linear plots only | ❌ Decision boundaries only | ❌ Not visualization tool | ✅ Tree diagrams | ❌ Not visualization tool | ✅ Excellent (purpose-built) |
 
 ---
 
@@ -998,6 +1190,89 @@ P(xᵢ|C) = (1/√(2πσ²)) × exp(-(xᵢ-μ)²/(2σ²))
 
 **Algorithm Steps**
 1. **Calculate priors** - P(C) for each class
+2. **Calculate feature statistics** - mean and variance for each feature per class
+3. **For prediction** - calculate P(C|X) for each class using Bayes' theorem
+4. **Return class** with highest posterior probability
+
+### 📊 PCA Mathematics
+
+#### Mathematical Foundation
+**Data Centering:**
+```
+X_centered = X - μ
+```
+**Where:**
+- `X` = original data matrix (n × p)
+- `μ` = mean vector (1 × p)
+- `X_centered` = mean-centered data
+
+#### Covariance Matrix
+**Covariance Calculation:**
+```
+C = (1/(n-1)) × X_centered^T × X_centered
+```
+**Where:**
+- `C` = covariance matrix (p × p)
+- `n` = number of samples
+- `p` = number of features
+
+#### Eigendecomposition
+**Eigenvalue Problem:**
+```
+C × v = λ × v
+```
+**Where:**
+- `v` = eigenvectors (principal component directions)
+- `λ` = eigenvalues (variance explained by each component)
+- `C` = covariance matrix
+
+#### Dimensionality Reduction
+**Data Transformation:**
+```
+X_reduced = X_centered × V^T
+```
+**Where:**
+- `V` = matrix of top k eigenvectors (k × p)
+- `X_reduced` = transformed data (n × k)
+- `k` = number of desired components (k < p)
+
+#### Variance Preservation
+**Explained Variance Ratio:**
+```
+ratio_i = λ_i / ∑λ_j
+```
+**Where:**
+- `ratio_i` = proportion of total variance explained by component i
+- `λ_i` = eigenvalue of component i
+- `∑λ_j` = sum of all eigenvalues
+
+#### Algorithm Steps
+1. **Center the data** - subtract mean from each feature
+2. **Compute covariance matrix** - measure feature relationships
+3. **Find eigenvectors and eigenvalues** - discover principal directions
+4. **Sort by eigenvalue magnitude** - rank components by importance
+5. **Select top k components** - choose desired dimensionality
+6. **Transform data** - project onto new coordinate system
+
+#### Key Mathematical Insights
+
+**What Eigenvectors Represent:**
+- **Direction**: Eigenvectors point in directions of maximum variance
+- **Orthogonality**: Principal components are perpendicular to each other
+- **Linear Combinations**: Each component is a weighted sum of original features
+
+**What Eigenvalues Represent:**
+- **Magnitude**: Larger eigenvalues = more important components
+- **Variance**: Eigenvalue = amount of variance captured in that direction
+- **Information**: Higher eigenvalues preserve more original data information
+
+**PCA Properties:**
+- **Optimal**: Minimizes reconstruction error for given number of components
+- **Unique**: Solution is mathematically unique (up to sign)
+- **Linear**: Only finds linear relationships between features
+- **Unsupervised**: Doesn't use target labels, only feature relationships
+
+---
 2. **Calculate feature statistics** - mean and variance for each feature per class
 3. **For prediction** - calculate posterior for each class using Bayes' theorem
 4. **Choose class** with highest posterior probability
