@@ -1350,7 +1350,7 @@ ML-Algorithms-From-Scratch/
 
 - [ ] **K-Means Clustering** - Partitioning algorithm
 - [ ] **Hierarchical Clustering** - Tree-based clustering
-- [ ] **PCA** - Dimensionality reduction
+- [x] **PCA** - Dimensionality reduction
 
 ### 🎯 Phase 5: Ensemble Methods (In Progress)
 
